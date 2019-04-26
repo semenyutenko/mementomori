@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,8 @@ import java.util.GregorianCalendar;
  * A simple {@link Fragment} subclass.
  */
 public class DatePickerFragment extends DialogFragment {
+
+    private static final String EXTRA_DATA = "mementomor.date";
 
     private static DatePickerFragment datePickerFragment;
     private DatePicker datePicker;
@@ -42,9 +45,20 @@ public class DatePickerFragment extends DialogFragment {
                 setPositiveButton(R.string.date_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        int year = datePicker.getYear();
+                        int month = datePicker.getMonth();
+                        int day = datePicker.getDayOfMonth();
+                        Date date = new GregorianCalendar(year, month, day).getTime();
+                        sendResult(Activity.RESULT_OK, date);
                     }
-                })
+                }).create();
     }
+    private void sendResult(int resoltCode, Date date){
+        if(getTargetFragment() == null) return;
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_DATA, date);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resoltCode, intent);
+    }
+
 
 }
