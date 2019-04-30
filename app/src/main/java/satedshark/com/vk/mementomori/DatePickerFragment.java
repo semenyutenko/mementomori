@@ -11,7 +11,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.DatePicker;
 
 import java.util.Date;
@@ -23,7 +22,7 @@ import java.util.GregorianCalendar;
  */
 public class DatePickerFragment extends DialogFragment {
 
-    private static final String EXTRA_DATA = "mementomor.date";
+    protected static final String EXTRA_DATE = "mementomor.date";
 
     private static DatePickerFragment datePickerFragment;
     private DatePicker datePicker;
@@ -56,7 +55,7 @@ public class DatePickerFragment extends DialogFragment {
     private void sendResult(int resoltCode, Date date){
         if(getTargetFragment() == null) return;
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_DATA, date);
+        intent.putExtra(EXTRA_DATE, date);
         getTargetFragment().onActivityResult(getTargetRequestCode(), resoltCode, intent);
     }
 

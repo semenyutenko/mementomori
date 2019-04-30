@@ -8,19 +8,18 @@ import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String DATE_BIRTHDAY = "day of birthday";
-    private static final String DATE_DEATH = "day of death";
+    protected static final String DATE_BIRTHDAY = "day_of_birthday";
+    protected static final String DATE_DEATH = "day_of_death";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragmentSetting = fm.findFragmentById(R.id.fragment_container);
         if(fragmentSetting == null){
-            fragmentSetting = SettingFragment.newInstance(editor);
+            fragmentSetting = SettingFragment.newInstance(preferences);
             fm.beginTransaction().add(R.id.fragment_container, fragmentSetting, null).commit();
         }
     }

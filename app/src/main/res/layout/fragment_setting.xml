@@ -32,6 +32,7 @@
         android:ems="10"
         android:hint="@string/hint_set_birthday"
         android:inputType="date"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textSettings" />
@@ -46,6 +47,7 @@
         android:ems="10"
         android:hint="@string/hint_set_death"
         android:inputType="date"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editDateBirthday" />
