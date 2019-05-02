@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.Serializable;
 import java.util.Date;
 
 public class SettingFragment extends Fragment implements View.OnClickListener {
@@ -22,22 +23,18 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private static final int REQUEST_DATE_DEATH = 471;
     private static final String DATE_DIALOG = "date_dialog";
 
-    private static SettingFragment settingFragment;
-
     private EditText editBirthday;
     private EditText editDeath;
     private Button buttonOk;
     private Button buttonCancel;
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
+    private MainActivity activity;
+    private static SettingFragment settingFragment;
 
     public SettingFragment() {
     }
 
-    public static SettingFragment newInstance(SharedPreferences preferences) {
-        if (settingFragment == null) settingFragment = new SettingFragment();
-        settingFragment.preferences = preferences;
-        settingFragment.editor = settingFragment.preferences.edit();
+    protected static SettingFragment newInstance() {
+        if(settingFragment == null) settingFragment = new SettingFragment();
         return settingFragment;
     }
 
@@ -50,16 +47,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_setting, container, false);
         editBirthday = v.findViewById(R.id.editDateBirthday);
-        if(preferences.contains(MainActivity.DATE_BIRTHDAY)){
-            Date date = new Date(preferences.getLong(MainActivity.DATE_BIRTHDAY, 0));
-            editBirthday.setText(DateFormat.format("d MMMM yyyy", date));
-        }
         editDeath = v.findViewById(R.id.editDateDeath);
-        if(preferences.contains(MainActivity.DATE_DEATH)){
-            Date date = new Date(preferences.getLong(MainActivity.DATE_DEATH, 0));
-            editDeath.setText(DateFormat.format("d MMMM yyyy", date));
-        }
         buttonOk = v.findViewById(R.id.buttonOk);
+        buttonOk.setOnClickListener((View.OnClickListener)getActivity());
         buttonCancel = v.findViewById(R.id.buttonCancel);
         editBirthday.setOnClickListener(this);
         editDeath.setOnClickListener(this);
@@ -69,7 +59,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        activity = (MainActivity) context;
     }
 
     @Override
@@ -100,13 +90,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
 
         switch (requestCode){
-            case REQUEST_DATE_BIRTHDAY: editBirthday.setText(DateFormat.format("d MMMM yyyy", date));
-            editor.putLong(MainActivity.DATE_BIRTHDAY, date.getTime()).commit();
+            case REQUEST_DATE_BIRTHDAY:
+                editBirthday.setText(DateFormat.format("d MMMM yyyy", date));
+                activity.saveDateOfBirthday(date.getTime());
             break;
-            case REQUEST_DATE_DEATH: editDeath.setText(DateFormat.format("d MMMM yyyy", date));
-            editor.putLong(MainActivity.DATE_DEATH, date.getTime()).commit();
+            case REQUEST_DATE_DEATH:
+                editDeath.setText(DateFormat.format("d MMMM yyyy", date));
+                activity.saveDateOfDeath(date.getTime());
             break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    protected interface PreferencesSaver{
+        void saveDateOfBirthday(long date);
+        void saveDateOfDeath(long date);
     }
 }

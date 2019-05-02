@@ -8,5 +8,6 @@
     <string name="button_cancel">Cancel</string>
     <string name="date_dialog_date">Choose date</string>
     <string name="date_button">Ok</string>
+    <string name="buttonSettings">Settings</string>
 
 </resources>
