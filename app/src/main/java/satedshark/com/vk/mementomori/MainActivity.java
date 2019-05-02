@@ -11,8 +11,7 @@ import android.view.View;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,
-        SettingFragment.PreferencesSaver {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String DATE_BIRTHDAY = "day_of_birthday";
     private static final String DATE_DEATH = "day_of_death";
@@ -23,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private FragmentManager fm;
+    private DateTime today;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         preferences = getPreferences(MODE_PRIVATE);
         editor = preferences.edit();
+        today = new DateTime(DateTime.now());
         fm = getSupportFragmentManager();
         if (!preferences.contains(DATE_BIRTHDAY) && !preferences.contains(DATE_DEATH)) callSettings();
         else {
@@ -38,17 +39,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else callSettings();
         }
     }
-    @Override
     public void saveDateOfBirthday(long date){
         editor.putLong(MainActivity.DATE_BIRTHDAY, date).commit();
     }
-    @Override
     public void saveDateOfDeath(long date){
         editor.putLong(MainActivity.DATE_DEATH, date).commit();
     }
 
     private void callCard() {
-        DateTime today = new DateTime(DateTime.now());
         DateTime dateBirthday = new DateTime(preferences.getLong(DATE_BIRTHDAY, 0));
         DateTime dateDeath = new DateTime(preferences.getLong(DATE_DEATH, 0));
         pastTime = Days.daysBetween(dateBirthday, today).getDays();
@@ -59,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void callSettings() {
-            Fragment fragmentSetting = SettingFragment.newInstance();
+            Fragment fragmentSetting = SettingFragment.newInstance(preferences.getLong(DATE_BIRTHDAY, today.getMillis()),
+                    preferences.getLong(DATE_DEATH, today.getMillis()));
             fm.beginTransaction().replace(R.id.fragment_container, fragmentSetting, null).commit();
     }
 

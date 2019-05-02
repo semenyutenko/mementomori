@@ -21,6 +21,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private static final int REQUEST_DATE_BIRTHDAY = 380;
     private static final int REQUEST_DATE_DEATH = 471;
+    private static final String DATE_BIRTHDAY = "day_of_birthday";
+    private static final String DATE_DEATH = "day_of_death";
     private static final String DATE_DIALOG = "date_dialog";
 
     private EditText editBirthday;
@@ -28,26 +30,37 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private Button buttonOk;
     private Button buttonCancel;
     private MainActivity activity;
-    private static SettingFragment settingFragment;
+    private long dateOfBirthday;
+    private long dateOfDeath;
 
     public SettingFragment() {
     }
 
-    protected static SettingFragment newInstance() {
-        if(settingFragment == null) settingFragment = new SettingFragment();
+    protected static SettingFragment newInstance(long dateOfBirthday, long dateOfDeath) {
+        SettingFragment settingFragment = new SettingFragment();
+        Bundle args = new Bundle();
+        args.putLong(DATE_BIRTHDAY, dateOfBirthday);
+        args.putLong(DATE_DEATH, dateOfDeath);
+        settingFragment.setArguments(args);
         return settingFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            dateOfBirthday = getArguments().getLong(DATE_BIRTHDAY);
+            dateOfDeath = getArguments().getLong(DATE_DEATH);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_setting, container, false);
         editBirthday = v.findViewById(R.id.editDateBirthday);
+        editBirthday.setText(DateFormat.format("d MMMM yyyy", dateOfBirthday));
         editDeath = v.findViewById(R.id.editDateDeath);
+        editDeath.setText(DateFormat.format("d MMMM yyyy", dateOfDeath));
         buttonOk = v.findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener((View.OnClickListener)getActivity());
         buttonCancel = v.findViewById(R.id.buttonCancel);
@@ -102,8 +115,4 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    protected interface PreferencesSaver{
-        void saveDateOfBirthday(long date);
-        void saveDateOfDeath(long date);
-    }
 }
